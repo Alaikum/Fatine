@@ -16,8 +16,8 @@
         </div>
 
         <div v-if="classe === 1">
-            <p>Stama attuale :{{ stamaAttuale }} <span>\Regen: {{ regenStama }}</span>   </p>
-            <p>Fatica attuale: {{ faticaAttuale }} <span>\Regen: {{ regenFatica }}</span>  </p>
+            <p >Stama attuale :{{ stamaAttuale }} <span>\Regen: {{ regenStama }}</span>   </p>
+            <p >Fatica attuale: {{ faticaAttuale }} <span>\Regen: {{ regenFatica }}</span>  </p>
             <div class="button">
 
                 <button class="inizio__turno" @click="inizioTurno()">Inizio Turno</button>
@@ -231,7 +231,7 @@ export default {
     }
 
     span{
-        color: red;
+        color: green;
         font-weight: 900;
     }
 }
