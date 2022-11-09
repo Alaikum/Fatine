@@ -4,20 +4,20 @@
 
         <div>
             <div v-if="classe === 0">
-                <h4>Stama iniziale: <input type="text" v-model="stama" @keyup="stamante()"></h4>
-                <h4>Fatica iniziale: <input type="text" v-model="fatica" @keyup="faticante()"></h4>
-                <h4>Stama regen: <input type="number" v-model="regenStama"></h4>
-                <h4>Fatica regen: <input type="text" v-model="regenFatica"></h4>
+                <h4>Stama iniziale: <br> <input type="text" v-model="stama" @keyup="stamante()"></h4>
+                <h4>Fatica iniziale: <br> <input type="text" v-model="fatica" @keyup="faticante()"></h4>
+                <h4>Stama regen: <br> <input type="number" v-model="regenStama"></h4>
+                <h4>Fatica regen: <br> <input type="text" v-model="regenFatica"></h4>
 
 
             </div>
             <button @click="vedi()">{{ dati }} </button>
-            
+
         </div>
 
         <div v-if="classe === 1">
-            <p >Stama attuale :{{ stamaAttuale }} <span>\Regen: {{ regenStama }}</span>   </p>
-            <p >Fatica attuale: {{ faticaAttuale }} <span>\Regen: {{ regenFatica }}</span>  </p>
+            <p>Stama attuale :{{ stamaAttuale }} <span>\Regen: {{ regenStama }}</span> </p>
+            <p>Fatica attuale: {{ faticaAttuale }} <span>\Regen: {{ regenFatica }}</span> </p>
             <div class="button">
 
                 <button class="inizio__turno" @click="inizioTurno()">Inizio Turno</button>
@@ -51,7 +51,7 @@ export default {
             azioniDifensive: 1,
             classe: 0,
             dati: 'Inserisci i tuoi dati',
-            contaSfondo:0
+            contaSfondo: 0
         }
     },
     // computed: {
@@ -124,23 +124,46 @@ export default {
 
         },
         fineTurno() {
-            this.stamaAttuale = this.cambioStama
-            this.stamaAttuale = parseInt(this.stamaAttuale) + parseInt(this.regenStama)
-            this.cambioStama = this.stamaAttuale
+            this.regenDiTurno(0, 0)
 
-            this.faticaAttuale = this.cambioFatica
-            this.faticaAttuale = parseInt(this.faticaAttuale) + parseInt(this.regenFatica)
-            this.cambioFatica = this.faticaAttuale
+            // this.stamaAttuale = this.cambioStama
+            // this.stamaAttuale = parseInt(this.stamaAttuale) + parseInt(this.regenStama)
+            // this.cambioStama = this.stamaAttuale
+
+            // this.faticaAttuale = this.cambioFatica
+            // this.faticaAttuale = parseInt(this.faticaAttuale) + parseInt(this.regenFatica)
+            // this.cambioFatica = this.faticaAttuale
 
 
         },
         nessunaAzione() {
+            // this.stamaAttuale = this.cambioStama
+            // this.stamaAttuale = parseInt(this.stamaAttuale) + parseInt(this.regenStama) +5
+            // this.cambioStama = this.stamaAttuale
+
+            // this.faticaAttuale = this.cambioFatica
+            // this.faticaAttuale = parseInt(this.faticaAttuale) + parseInt(this.regenFatica) +1
+            // this.cambioFatica = this.faticaAttuale
+            this.regenDiTurno(5, 1)
+
+
+        },
+        regenDiTurno(x, y) {
             this.stamaAttuale = this.cambioStama
-            this.stamaAttuale = parseInt(this.stamaAttuale) + parseInt(this.regenStama) +5
+            this.stamaAttuale = parseInt(this.stamaAttuale) + parseInt(this.regenStama) + x
+            if (this.stamaAttuale > this.stama) {
+
+                this.stamaAttuale = this.stama
+            }
             this.cambioStama = this.stamaAttuale
 
+
             this.faticaAttuale = this.cambioFatica
-            this.faticaAttuale = parseInt(this.faticaAttuale) + parseInt(this.regenFatica) +1
+            this.faticaAttuale = parseInt(this.faticaAttuale) + parseInt(this.regenFatica) + y
+            if (this.faticaAttuale > this.fatica) {
+
+                this.faticaAttuale = this.fatica
+            }
             this.cambioFatica = this.faticaAttuale
 
 
@@ -151,12 +174,12 @@ export default {
         cambioSfondo() {
             let sfondo = document.getElementById('#sfondo');
             console.log(sfondo)
-            if (this.contaSfondo===0){
+            if (this.contaSfondo === 0) {
                 sfondo.style.backgroundImage = "url(" + require("../assets/warliv10.jpeg") + ")";
                 this.contaSfondo++
-            }else{
+            } else {
                 sfondo.style.backgroundImage = "url(" + require("../assets/war2.jpeg") + ")";
-                this.contaSfondo=0
+                this.contaSfondo = 0
             }
 
         },
@@ -230,7 +253,7 @@ export default {
         }
     }
 
-    span{
+    span {
         color: green;
         font-weight: 900;
     }
