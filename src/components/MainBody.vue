@@ -1,7 +1,7 @@
 <template>
   <div class="background">
     <div class="container">
-      <h1>Disegni fatti da quello stronzo di Murdock</h1>
+      <h1 style="padding:1px;">Disegni fatti da quello stronzo di Murdock</h1>
       <p>
         Scegli la tua classe:
         <select name="weew" id="" v-model="classe" >
@@ -16,15 +16,15 @@
           <option value="Guardiano">Guardiano</option>
         </select>
       </p>
-      <p>La tua classe è {{classe}} </p>
-      <p>{{cambioClasse}}</p>
-      <GuerrieroStat v-if="classe==='Guerriero'"/>
+      <!-- <p>La tua classe è {{classe}} </p>
+      <p>{{cambioClasse}}</p> -->
+      <PgStat :pg="classe" />
     </div>
   </div>
 </template>
 
 <script>
-import GuerrieroStat from "./GuerrieroStat.vue";
+import PgStat from "./PgStat.vue";
 export default {
     data() {
         return {
@@ -41,7 +41,7 @@ export default {
             return this.classe;
         }
     },
-    components: { GuerrieroStat }
+    components: { PgStat }
 }
 </script>
 
@@ -54,7 +54,11 @@ export default {
   .container {
     max-width: 320px;
     margin: 0 auto;
-    background-color: #e4bf8a;
+    // background-color: #e4bf8a;
+    background-image: url(../assets/sfondo-di-carta-grunge_1048-10849.jpg) ;
+    box-shadow: 10px 10px 5px #aaaaaa;
+    background-repeat: no-repeat;
+    background-size: cover;
     border: 1px solid black;
     border-radius: 15px;
     height: 100%;
