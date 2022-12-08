@@ -37,19 +37,29 @@
                 <button @click="attaccoPesante()">Attacco Pesante</button>
                 <button class="secondari" @click="abilitaPesante()">Abilità Pesante</button>
                 <button @click="azioneDifensiva()">Azione Difensiva</button>
-                <div v-if="classeMagica()">
+                <div class="" v-if="classeMagica()">
                     <h4>Inserisci qui il consumo di energia Magica:</h4>
-                    <input type="text" v-model="consumoMagia">
-                    <button @click="consumoMagica()"> Consuma Magica</button>
+                    <div class="consumi">
+                        <input class="consumi__input" type="text" v-model="consumoMagia">
+                        <button @click="consumoMagica()"> Consuma Magica</button>
+                    </div>
                 </div>
-                <button class="secondari" @click="consumiExtra()"> Consumi Extra</button>
-                <div v-if="consumi">
+                <div class="arrow"  @click="consumiExtra()">
+                    <button class="secondari"> Consumi Extra </button> 
+                    <strong v-if="!consumi">&DownArrowBar;</strong>
+                    <strong v-if="consumi">&UpArrowBar;</strong>
+                </div>
+                <div class="" v-if="consumi">
                     <h4>Inserisci qui il consumo di Stamina Extra:</h4>
-                    <input type="text" v-model="consumoSta">
-                    <button @click="consumoStamina()"> Consuma Stamina Aggiuntiva</button>
+                    <div class="consumi">
+                        <input class="consumi__input" type="text" v-model="consumoSta">
+                        <button @click="consumoStamina()"> Consuma Stamina</button>
+                    </div>
                     <h4>Inserisci qui il consumo di Fatica Extra:</h4>
-                    <input type="text" v-model="consumoFat">
-                    <button @click="consumoFatica()"> Consuma Fatica Aggiuntiva</button>
+                    <div class="consumi">
+                        <input class="consumi__input" type="text" v-model="consumoFat">
+                        <button @click="consumoFatica()"> Consuma Fatica</button>
+                    </div>
                 </div>
                 <button class="fine__turno" @click="fineTurno()">Fine Turno</button>
                 <button class="fine__turno" @click="nessunaAzione()">Nessuna Azione</button>
@@ -91,7 +101,8 @@ export default {
             contaSfondo: 0,
             consumi: false,
             inizio: 'Inizio Combat',
-            combattimento: false
+            combattimento: false,
+         
         };
     },
     // computed: {
@@ -259,7 +270,7 @@ export default {
                 this.classe = 0;
                 this.dati = "inserisci i tuoi dati";
             }
-            this.combattimento=!this.combattimento
+            this.combattimento = !this.combattimento
         },
         classeMagica() {
             let p = this.pg
@@ -352,6 +363,30 @@ export default {
     span {
         color: green;
         font-weight: 900;
+    }
+
+    .consumi {
+        display: flex;
+        justify-content: space-between;
+    }
+    .consumi__input{
+        border-radius: 10px;
+        padding: 5px;
+    }
+    .arrow{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 15px;
+        strong{
+            font-size: 1.5rem;
+            border: 1px solid black;
+            padding: 5px;
+            border-radius: 10px;
+            background-color: lemonchiffon;
+           
+            
+        }
     }
 }
 </style>
