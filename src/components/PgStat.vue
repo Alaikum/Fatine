@@ -7,9 +7,12 @@
             <div v-if="classe === 0">
                 <h4>Stama iniziale: <br> <input type="text" v-model="stama" @keyup="stamante()"></h4>
                 <h4>Fatica iniziale: <br> <input type="text" v-model="fatica" @keyup="faticante()"></h4>
-                <h4>Stama regen: <br> <input type="number" v-model="regenStama"></h4>
+                <h4>Stama regen: <br> <input type="text" v-model="regenStama"></h4>
                 <h4>Fatica regen: <br> <input type="text" v-model="regenFatica"></h4>
-                <EnergiaMagica @search="magia" :magia="magiaIniziale"  v-if="pg ==='Mago' "/>
+                <div v-if="classeMagica()">
+                    <h4>Energia Magica Iniziale: <br> <input type="text" v-model="magica" @keyup="magicante()"> </h4>
+                    <h4>Magica regen: <br> <input type="text" v-model="regenMagica"></h4>
+                </div>
 
             </div>
             <div class="button__top">
@@ -20,19 +23,34 @@
         </div>
 
         <div v-if="classe === 1">
-            <p>Stama attuale :{{ stamaAttuale }} <span>\Regen: {{ regenStama }}</span> </p>
-            <p>Fatica attuale: {{ faticaAttuale }} <span>\Regen: {{ regenFatica }}</span> </p>
-          {{magiaIniziale}}
-            <StatMagica v-if="pg ==='Mago' " />
+            <p>Stama attuale :{{ stamaAttuale }} <span>\Regen: {{ regenStama }}(+5)</span> </p>
+            <p>Fatica attuale: {{ faticaAttuale }} <span>\Regen: {{ regenFatica }}(+1)</span> </p>
+            <p v-if="classeMagica()">Energia Magica attuale: {{ magicaAttuale }} <span>\Regen: {{ regenMagica
+            }}(+1)</span> </p>
+
+
             <div class="button">
 
-                <button class="inizio__turno" @click="inizioTurno()">Inizio Turno</button>
+                <button class="inizio__turno" @click="inizioTurno()">{{ inizio }}</button>
                 <button @click="attaccoLeggero()">Attacco Leggero</button>
                 <button class="secondari" @click="abilitaLeggera()">Abilità Leggera</button>
                 <button @click="attaccoPesante()">Attacco Pesante</button>
                 <button class="secondari" @click="abilitaPesante()">Abilità Pesante</button>
                 <button @click="azioneDifensiva()">Azione Difensiva</button>
-                <BottoneMagica v-if="pg ==='Mago' " />
+                <div v-if="classeMagica()">
+                    <h4>Inserisci qui il consumo di energia Magica:</h4>
+                    <input type="text" v-model="consumoMagia">
+                    <button @click="consumoMagica()"> Consuma Magica</button>
+                </div>
+                <button class="secondari" @click="consumiExtra()"> Consumi Extra</button>
+                <div v-if="consumi">
+                    <h4>Inserisci qui il consumo di Stamina Extra:</h4>
+                    <input type="text" v-model="consumoSta">
+                    <button @click="consumoStamina()"> Consuma Stamina Aggiuntiva</button>
+                    <h4>Inserisci qui il consumo di Fatica Extra:</h4>
+                    <input type="text" v-model="consumoFat">
+                    <button @click="consumoFatica()"> Consuma Fatica Aggiuntiva</button>
+                </div>
                 <button class="fine__turno" @click="fineTurno()">Fine Turno</button>
                 <button class="fine__turno" @click="nessunaAzione()">Nessuna Azione</button>
             </div>
@@ -44,9 +62,7 @@
 </template>
 
 <script>
-import EnergiaMagica from './EnergiaMagica.vue';
-import StatMagica from './StatMagica.vue';
-import BottoneMagica from './BottoneMagica.vue';
+
 
 export default {
     props: {
@@ -56,17 +72,26 @@ export default {
         return {
             stama: 0,
             fatica: 0,
+            magica: 0,
             stamaAttuale: "",
-            magiaIniziale:'',
             cambioStama: "",
             regenStama: 10,
+            consumoSta: 0,
             regenFatica: 1,
+            regenMagica: 0,
             cambioFatica: "",
             faticaAttuale: "",
+            consumoFat: 0,
             azioniDifensive: 1,
+            magicaAttuale: "",
+            cambioMagica: "",
+            consumoMagia: 0,
             classe: 0,
             dati: "Inserisci i tuoi dati",
-            contaSfondo: 0
+            contaSfondo: 0,
+            consumi: false,
+            inizio: 'Inizio Combat',
+            combattimento: false
         };
     },
     // computed: {
@@ -75,14 +100,33 @@ export default {
     //     return this.stama;
     // }
     // },
-    methods: {
-        magia(data) {
-            console.log(data)
-            this.magiaIniziale = data
+    watch: {
+        stamaAttuale() {
+            if (this.stamaAttuale < 1 && this.combattimento) alert('STAMA FINITA')
+
         },
+        faticaAttuale() {
+            if (this.faticaAttuale < 1 && this.combattimento) alert('FATICA FINITA')
+
+        },
+        magicaAttuale() {
+            if (this.classeMagica()) {
+                if (this.magicaAttuale < 1 && this.combattimento) alert('ENERGIA MAGICA FINITA')
+            }
+
+        }
+    },
+    methods: {
+
         nuovoCombat() {
             this.stamante();
             this.faticante();
+            this.magicante();
+            this.inizio = 'Inizio Combat';
+
+        },
+        consumiExtra() {
+            this.consumi = !this.consumi
         },
         stamante() {
             this.cambioStama = this.stama;
@@ -91,6 +135,26 @@ export default {
         faticante() {
             this.cambioFatica = this.fatica;
             this.faticaAttuale = this.cambioFatica;
+        },
+        magicante() {
+            this.cambioMagica = this.magica;
+            this.magicaAttuale = this.cambioMagica;
+        },
+        consumoStamina() {
+            this.stamaAttuale = this.cambioStama;
+            this.stamaAttuale = this.stamaAttuale - this.consumoSta;
+            this.cambioStama = this.stamaAttuale;
+
+        },
+        consumoFatica() {
+            this.faticaAttuale = this.cambioFatica;
+            this.faticaAttuale = this.faticaAttuale - this.consumoFat;
+            this.cambioFatica = this.faticaAttuale;
+        },
+        consumoMagica() {
+            this.magicaAttuale = this.cambioMagica;
+            this.magicaAttuale = this.magicaAttuale - this.consumoMagia;
+            this.cambioMagica = this.magicaAttuale;
         },
         attaccoLeggero() {
             // console.log(this.stamaAttuale)
@@ -136,53 +200,52 @@ export default {
             this.azioniDifensive++;
         },
         fineTurno() {
-            this.regenDiTurno(0, 0);
-            // this.stamaAttuale = this.cambioStama
-            // this.stamaAttuale = parseInt(this.stamaAttuale) + parseInt(this.regenStama)
-            // this.cambioStama = this.stamaAttuale
-            // this.faticaAttuale = this.cambioFatica
-            // this.faticaAttuale = parseInt(this.faticaAttuale) + parseInt(this.regenFatica)
-            // this.cambioFatica = this.faticaAttuale
+            this.regenDiTurno(0, 0, 0);
         },
         nessunaAzione() {
-            // this.stamaAttuale = this.cambioStama
-            // this.stamaAttuale = parseInt(this.stamaAttuale) + parseInt(this.regenStama) +5
-            // this.cambioStama = this.stamaAttuale
-            // this.faticaAttuale = this.cambioFatica
-            // this.faticaAttuale = parseInt(this.faticaAttuale) + parseInt(this.regenFatica) +1
-            // this.cambioFatica = this.faticaAttuale
-            this.regenDiTurno(5, 1);
+            this.regenDiTurno(5, 1, 1);
         },
-        regenDiTurno(x, y) {
+        regenDiTurno(x, y, z) {
             this.stamaAttuale = this.cambioStama;
             this.stamaAttuale = parseInt(this.stamaAttuale) + parseInt(this.regenStama) + x;
             if (this.stamaAttuale > this.stama) {
                 this.stamaAttuale = this.stama;
             }
             this.cambioStama = this.stamaAttuale;
+
             this.faticaAttuale = this.cambioFatica;
             this.faticaAttuale = parseInt(this.faticaAttuale) + parseInt(this.regenFatica) + y;
             if (this.faticaAttuale > this.fatica) {
                 this.faticaAttuale = this.fatica;
             }
             this.cambioFatica = this.faticaAttuale;
+
+            this.magicaAttuale = this.cambioMagica;
+            this.magicaAttuale = parseInt(this.magicaAttuale) + parseInt(this.regenMagica) + z;
+            if (this.magicaAttuale > this.magica) {
+                this.magicaAttuale = this.magica;
+            }
+            this.cambioMagica = this.magicaAttuale;
+
         },
         inizioTurno() {
             this.azioniDifensive = 1;
+            this.inizio = 'Inizio Turno';
+
         },
         cambioSfondo() {
             let sfondo = document.getElementById("#sfondo");
             console.log(sfondo);
-            if (this.contaSfondo === 0 && this.pg==='Guerriero') {
+            if (this.contaSfondo === 0 && this.pg === 'Guerriero') {
                 sfondo.style.backgroundImage = "url(" + require("../assets/guerriero_liv_1-10pergamena.jpg") + ")";
                 this.contaSfondo++;
             }
-            else if(this.pg==='Guerriero') {
-                
+            else if (this.pg === 'Guerriero') {
+
                 sfondo.style.backgroundImage = "url(" + require("../assets/warliv10.jpeg") + ")";
                 this.contaSfondo = 0;
             }
-            else if(this.pg!=='Guerriero') {
+            else if (this.pg !== 'Guerriero') {
                 sfondo.style.backgroundImage = "url(" + require("../assets/sfondo-di-carta-grunge_1048-10849.jpg") + ")";
                 this.contaSfondo = 0;
             }
@@ -196,9 +259,17 @@ export default {
                 this.classe = 0;
                 this.dati = "inserisci i tuoi dati";
             }
+            this.combattimento=!this.combattimento
+        },
+        classeMagica() {
+            let p = this.pg
+            if (p === 'Mago' || p === 'Chierico' || p === 'Druido' || p === 'Guardiano') {
+                return true
+            }
+            return false
         }
     },
-    components: { EnergiaMagica, StatMagica, BottoneMagica },
+
 
 }
 
@@ -209,24 +280,24 @@ export default {
 .main {
 
     // background-image: url(../assets/guerriero_liv_1-10pergamena.jpg);
-    background-image: url(../assets/sfondo-di-carta-grunge_1048-10849.jpg) ;
+    background-image: url(../assets/sfondo-di-carta-grunge_1048-10849.jpg);
     background-size: cover;
     background-repeat: no-repeat;
-    // background-position: 0px -50px;
-    background-color: white;
-    height: 80%;
+    background-position: center center;
     border: 1px solid black;
     border-radius: 25px;
     overflow: hidden;
     text-align: start;
-    padding: 0px 5px;
+    padding: 10px 5px;
 
 
-    h4,p,h1 {
+    h4,
+    p,
+    h1 {
         padding: 5px;
     }
 
-  
+
 
     .button__top {
         display: flex;
