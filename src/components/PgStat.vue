@@ -1,6 +1,6 @@
 <template>
 
-    <div class="main" id="#sfondo" v-if="pg !== ''">
+    <div class="main" v-if="pg !== ''">
         <h1>{{ pg }}</h1>
 
         <div>
@@ -28,45 +28,47 @@
             <p v-if="classeMagica()">Energia Magica attuale: {{ magicaAttuale }} <span>\Regen: {{ regenMagica
             }}(+1)</span> </p>
 
+            <div class="main__button" id="#sfondo">
 
-            <div class="button">
+                <div class="button">
 
-                <button class="inizio__turno" @click="inizioTurno()">{{ inizio }}</button>
-                <button @click="attaccoLeggero()">Attacco Leggero</button>
-                <button class="secondari" @click="abilitaLeggera()">Abilità Leggera</button>
-                <button @click="attaccoPesante()">Attacco Pesante</button>
-                <button class="secondari" @click="abilitaPesante()">Abilità Pesante</button>
-                <button @click="azioneDifensiva()">Azione Difensiva</button>
-                <div class="" v-if="classeMagica()">
-                    <h4>Inserisci qui il consumo di energia Magica:</h4>
-                    <div class="consumi">
-                        <input class="consumi__input" type="text" v-model="consumoMagia">
-                        <button @click="consumoMagica()"> Consuma Magica</button>
+                    <button class="inizio__turno" @click="inizioTurno()">{{ inizio }}</button>
+                    <button @click="attaccoLeggero()">Attacco Leggero</button>
+                    <button class="secondari" @click="abilitaLeggera()">Abilità Leggera</button>
+                    <button @click="attaccoPesante()">Attacco Pesante</button>
+                    <button class="secondari" @click="abilitaPesante()">Abilità Pesante</button>
+                    <button @click="azioneDifensiva()">Azione Difensiva</button>
+                    <div class="" v-if="classeMagica()">
+                        <h4 class="text__out__button">Inserisci qui il consumo di energia Magica:</h4>
+                        <div class="consumi">
+                            <input class="consumi__input" type="text" v-model="consumoMagia">
+                            <button @click="consumoMagica()"> Consuma Magica</button>
+                        </div>
                     </div>
-                </div>
-                <div class="arrow"  @click="consumiExtra()">
-                    <button class="secondari"> Consumi Extra </button> 
-                    <strong v-if="!consumi">&DownArrowBar;</strong>
-                    <strong v-if="consumi">&UpArrowBar;</strong>
-                </div>
-                <div class="" v-if="consumi">
-                    <h4>Inserisci qui il consumo di Stamina Extra:</h4>
-                    <div class="consumi">
-                        <input class="consumi__input" type="text" v-model="consumoSta">
-                        <button @click="consumoStamina()"> Consuma Stamina</button>
+                    <div class="arrow" @click="consumiExtra()">
+                        <button class="secondari"> Consumi Extra </button>
+                        <strong v-if="!consumi">&DownArrowBar;</strong>
+                        <strong v-if="consumi">&UpArrowBar;</strong>
                     </div>
-                    <h4>Inserisci qui il consumo di Fatica Extra:</h4>
-                    <div class="consumi">
-                        <input class="consumi__input" type="text" v-model="consumoFat">
-                        <button @click="consumoFatica()"> Consuma Fatica</button>
+                    <div class="" v-if="consumi">
+                        <h4 class="text__out__button">Inserisci qui il consumo di Stamina Extra:</h4>
+                        <div class="consumi">
+                            <input class="consumi__input" type="text" v-model="consumoSta">
+                            <button @click="consumoStamina()"> Consuma Stamina</button>
+                        </div>
+                        <h4 class="text__out__button">Inserisci qui il consumo di Fatica Extra:</h4>
+                        <div class="consumi">
+                            <input class="consumi__input" type="text" v-model="consumoFat">
+                            <button @click="consumoFatica()"> Consuma Fatica</button>
+                        </div>
                     </div>
+                    <button class="fine__turno" @click="fineTurno()">Fine Turno</button>
+                    <button class="fine__turno" @click="nessunaAzione()">Nessuna Azione</button>
+                    <button @click="cambioSfondo()">prova cambio img</button>
                 </div>
-                <button class="fine__turno" @click="fineTurno()">Fine Turno</button>
-                <button class="fine__turno" @click="nessunaAzione()">Nessuna Azione</button>
+
             </div>
         </div>
-        <div> <button @click="cambioSfondo()">prova_cambio_img</button></div>
-
 
     </div>
 </template>
@@ -102,7 +104,7 @@ export default {
             consumi: false,
             inizio: 'Inizio Combat',
             combattimento: false,
-         
+
         };
     },
     // computed: {
@@ -257,8 +259,16 @@ export default {
                 this.contaSfondo = 0;
             }
             else if (this.pg !== 'Guerriero') {
-                sfondo.style.backgroundImage = "url(" + require("../assets/sfondo-di-carta-grunge_1048-10849.jpg") + ")";
-                this.contaSfondo = 0;
+
+                if (this.contaSfondo === 0 && this.pg === 'Mago') {
+                    sfondo.style.backgroundImage = "url(" + require("../assets/maga_liv1-10.jpg") + ")";
+                    this.contaSfondo++;
+
+                } else {
+                    sfondo.style.backgroundImage = "url(" + require("../assets/sfondo-di-carta-grunge_1048-10849.jpg") + ")";
+                    this.contaSfondo = 0;
+                }
+
             }
         },
         vedi() {
@@ -291,11 +301,11 @@ export default {
 .main {
 
     // background-image: url(../assets/guerriero_liv_1-10pergamena.jpg);
-    background-image: url(../assets/sfondo-di-carta-grunge_1048-10849.jpg);
+    // background-image: url(../assets/sfondo-di-carta-grunge_1048-10849.jpg);
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center center;
-    border: 1px solid black;
+    // border: 1px solid black;
     border-radius: 25px;
     overflow: hidden;
     text-align: start;
@@ -306,9 +316,27 @@ export default {
     p,
     h1 {
         padding: 5px;
+
     }
 
+    .text__out__button {
+        color: black;
+        background-color: rgba(230, 210, 200, 0.7);
+    }
 
+    .main__button {
+
+        // justify-content: space-between;
+        // background-image: url(../assets/maga_liv1-10.jpg);
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center center;
+        border: 1px solid black;
+        border-radius: 25px;
+        overflow: hidden;
+
+
+    }
 
     .button__top {
         display: flex;
@@ -369,23 +397,26 @@ export default {
         display: flex;
         justify-content: space-between;
     }
-    .consumi__input{
+
+    .consumi__input {
         border-radius: 10px;
         padding: 5px;
     }
-    .arrow{
+
+    .arrow {
         display: flex;
         justify-content: center;
         align-items: center;
         gap: 15px;
-        strong{
+
+        strong {
             font-size: 1.5rem;
             border: 1px solid black;
             padding: 5px;
             border-radius: 10px;
             background-color: lemonchiffon;
-           
-            
+
+
         }
     }
 }
