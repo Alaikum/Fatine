@@ -1,9 +1,32 @@
 <template>
 
     <div class="main" v-if="pg !== ''">
-        <h1>{{ pg }}</h1>
+        <h1>{{ pg }} <span @click="settingMenu()" class="setting" v-if="classe === 1"><font-awesome-icon
+                    icon="fa-solid fa-gears" v-if="!setting" /></span>
+        </h1>
+        <div class="menu__setting" v-if="setting">
 
+            <h1 class="title__setting">{{ pg }} <span @click="settingMenu()" class="setting"
+                    v-if="classe === 1"><font-awesome-icon icon="fa-solid fa-xmark" /></span>
+
+            </h1>
+            <ul class="ul__setting">
+                <li :class="settingAttLeg ? '' : 'setting__off'" @click="setAttLeg()">Attacco Leggero</li>
+                <li :class="settingAbiLeg ? '' : 'setting__off'" @click="setAbiLeg()">Abilità Leggera</li>
+                <li :class="settingAttPes ? '' : 'setting__off'" @click="setAttPes()">Attacco Pesante</li>
+                <li :class="settingAbiPes ? '' : 'setting__off'" @click="setAbiPes()">Abilità Pesante</li>
+                <li :class="settingAziDif ? '' : 'setting__off'" @click="setAziDif()">Azione Difensiva</li>
+                <li :class="settingConMag ? '' : 'setting__off'" @click="setConMag()" v-if="classeMagica()">Consuma Magica</li>
+                <li :class="settingConExt ? '' : 'setting__off'" @click="setConExt()">Consumi Extra </li>
+                <li class="special" :class="settingConSta ? '' : 'setting__off'" @click="setConSta()">Consuma Stamina</li>
+                <li class="special" :class="settingConFat ? '' : 'setting__off'" @click="setConFat()">Consume Fatica</li>
+
+
+            </ul>
+
+        </div>
         <div>
+
             <div v-if="classe === 0">
                 <h4>Stama iniziale: <br> <input type="text" v-model="stama" @keyup="stamante()"></h4>
                 <h4>Fatica iniziale: <br> <input type="text" v-model="fatica" @keyup="faticante()"></h4>
@@ -33,33 +56,37 @@
                 <div class="button">
 
                     <button class="inizio__turno" @click="inizioTurno()">{{ inizio }}</button>
-                    <button @click="attaccoLeggero()">Attacco Leggero</button>
-                    <button class="secondari" @click="abilitaLeggera()">Abilità Leggera</button>
-                    <button @click="attaccoPesante()">Attacco Pesante</button>
-                    <button class="secondari" @click="abilitaPesante()">Abilità Pesante</button>
-                    <button @click="azioneDifensiva()">Azione Difensiva</button>
-                    <div class="" v-if="classeMagica()">
+                    <button @click="attaccoLeggero()" v-if="settingAttLeg">Attacco Leggero</button>
+                    <button class="secondari" @click="abilitaLeggera()" v-if="settingAbiLeg">Abilità Leggera</button>
+                    <button @click="attaccoPesante()" v-if="settingAttPes">Attacco Pesante</button>
+                    <button class="secondari" @click="abilitaPesante()" v-if="settingAbiPes">Abilità Pesante</button>
+                    <button @click="azioneDifensiva()" v-if="settingAziDif">Azione Difensiva</button>
+                    <div class="" v-if="classeMagica() && settingConMag">
                         <h4 class="text__out__button">Inserisci qui il consumo di energia Magica:</h4>
                         <div class="consumi">
                             <input class="consumi__input" type="text" v-model="consumoMagia">
                             <button @click="consumoMagica()"> Consuma Magica</button>
                         </div>
                     </div>
-                    <div class="arrow" @click="consumiExtra()">
+                    <div class="arrow" @click="consumiExtra()" v-if="settingConExt">
                         <button class="secondari"> Consumi Extra </button>
                         <strong v-if="!consumi">&DownArrowBar;</strong>
                         <strong v-if="consumi">&UpArrowBar;</strong>
                     </div>
                     <div class="" v-if="consumi">
-                        <h4 class="text__out__button">Inserisci qui il consumo di Stamina Extra:</h4>
-                        <div class="consumi">
-                            <input class="consumi__input" type="text" v-model="consumoSta">
-                            <button @click="consumoStamina()"> Consuma Stamina</button>
+                        <div v-if="settingConSta">
+                            <h4 class="text__out__button">Inserisci qui il consumo di Stamina Extra:</h4>
+                            <div class="consumi">
+                                <input class="consumi__input" type="text" v-model="consumoSta">
+                                <button @click="consumoStamina()"> Consuma Stamina</button>
+                            </div>
                         </div>
-                        <h4 class="text__out__button">Inserisci qui il consumo di Fatica Extra:</h4>
-                        <div class="consumi">
-                            <input class="consumi__input" type="text" v-model="consumoFat">
-                            <button @click="consumoFatica()"> Consuma Fatica</button>
+                        <div v-if="settingConFat">
+                            <h4 class="text__out__button">Inserisci qui il consumo di Fatica Extra:</h4>
+                            <div class="consumi">
+                                <input class="consumi__input" type="text" v-model="consumoFat">
+                                <button @click="consumoFatica()"> Consuma Fatica</button>
+                            </div>
                         </div>
                     </div>
                     <button class="fine__turno" @click="fineTurno()">Fine Turno</button>
@@ -104,6 +131,16 @@ export default {
             consumi: false,
             inizio: 'Inizio Combat',
             combattimento: false,
+            setting: false,
+            settingAttLeg: true,
+            settingAbiLeg: true,
+            settingAttPes: true,
+            settingAbiPes: true,
+            settingAziDif: true,
+            settingConMag: true,
+            settingConExt: true,
+            settingConSta: true,
+            settingConFat: true,
 
         };
     },
@@ -130,6 +167,36 @@ export default {
         }
     },
     methods: {
+        settingMenu() {
+            this.setting = !this.setting
+        },
+        setAttLeg() {
+            this.settingAttLeg = !this.settingAttLeg
+        },
+        setAbiLeg() {
+            this.settingAbiLeg = !this.settingAbiLeg
+        },
+        setAttPes() {
+            this.settingAttPes = !this.settingAttPes
+        },
+        setAbiPes() {
+            this.settingAbiPes = !this.settingAbiPes
+        },
+        setAziDif() {
+            this.settingAziDif = !this.settingAziDif
+        },
+        setConMag() {
+            this.settingConMag = !this.settingConMag
+        },
+        setConExt() {
+            this.settingConExt = !this.settingConExt
+        },
+        setConSta() {
+            this.settingConSta = !this.settingConSta
+        },
+        setConFat() {
+            this.settingConFat = !this.settingConFat
+        },
 
         nuovoCombat() {
             this.stamante();
@@ -310,6 +377,7 @@ export default {
     overflow: hidden;
     text-align: start;
     padding: 10px 5px;
+    position: relative;
 
 
     h4,
@@ -317,6 +385,75 @@ export default {
     h1 {
         padding: 5px;
 
+    }
+
+
+    .setting {
+        color: black;
+        position: relative;
+        left: 25px;
+
+        &:hover {
+            color: white;
+            border: 1px solid black;
+            cursor: pointer;
+        }
+    }
+
+    .menu__setting {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        padding: 10px 5px;
+    }
+
+    .title__setting {
+        display: flex;
+        flex-direction: row;
+        color: white;
+
+        .setting {
+            color: white;
+        }
+
+    }
+
+    .ul__setting {
+        color: white;
+        text-align: center;
+        padding: 1rem;
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        justify-content: flex-end;
+        align-items: flex-end;
+
+
+
+        li {
+            padding: 1rem;
+            border: 1px solid black;
+            max-width: 200px;
+            border-radius: 15px;
+            background-color: green;
+
+            &:hover {
+                cursor: pointer;
+            }
+        }
+
+        .special{
+            background-color: sandybrown;
+        }
+
+        .setting__off {
+            background-color: red;
+            color: black;
+        }
     }
 
     .text__out__button {
@@ -330,7 +467,7 @@ export default {
         // background-image: url(../assets/maga_liv1-10.jpg);
         background-size: cover;
         background-repeat: no-repeat;
-        background-position: center center;
+        // background-position: center center;
         border: 1px solid black;
         border-radius: 25px;
         overflow: hidden;
@@ -361,6 +498,7 @@ export default {
         justify-content: center;
         align-items: flex-start;
         padding-top: 15px;
+        min-height: 400px;
 
 
         button {
