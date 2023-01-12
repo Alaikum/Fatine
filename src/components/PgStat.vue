@@ -16,11 +16,15 @@
                 <li :class="settingAttPes ? '' : 'setting__off'" @click="setAttPes()">Attacco Pesante</li>
                 <li :class="settingAbiPes ? '' : 'setting__off'" @click="setAbiPes()">Abilità Pesante</li>
                 <li :class="settingAziDif ? '' : 'setting__off'" @click="setAziDif()">Azione Difensiva</li>
-                <li :class="settingConMag ? '' : 'setting__off'" @click="setConMag()" v-if="classeMagica()">Consuma Magica</li>
+                <li :class="settingConMag ? '' : 'setting__off'" @click="setConMag()" v-if="classeMagica()">Consuma
+                    Magica</li>
                 <li :class="settingConExt ? '' : 'setting__off'" @click="setConExt()">Consumi Extra </li>
-                <li class="special" :class="settingConSta ? '' : 'setting__off'" @click="setConSta()">Consuma Stamina</li>
-                <li class="special" :class="settingConFat ? '' : 'setting__off'" @click="setConFat()">Consume Fatica</li>
-
+                <li class="special" :class="settingConSta ? '' : 'setting__off'" @click="setConSta()">Consuma Stamina
+                </li>
+                <li class="special" :class="settingConFat ? '' : 'setting__off'" @click="setConFat()">Consume Fatica
+                </li>
+                <li v-if="classeChierico()" :class="settingLuceBuio ? '' : 'setting__off'" @click="setBuLu()">Luce Buio
+                </li>
 
             </ul>
 
@@ -36,6 +40,13 @@
                     <h4>Energia Magica Iniziale: <br> <input type="text" v-model="magica" @keyup="magicante()"> </h4>
                     <h4>Magica regen: <br> <input type="text" v-model="regenMagica"></h4>
                 </div>
+                <div v-if="classeChierico()">
+                    <h4>Luce Iniziale: <br> <input type="text" v-model="luce"> </h4>
+                    <h4>Buio Iniziale: <br> <input type="text" v-model="buio"></h4>
+                    <h4 v-if="parseInt(buio) + parseInt(luce) > 100"
+                        style="color:red; background:white; border:1px solid black;">Luce e Buio inseriti in modo errato
+                    </h4>
+                </div>
 
             </div>
             <div class="button__top">
@@ -48,7 +59,8 @@
         <div v-if="classe === 1">
             <p>Stama attuale :{{ stamaAttuale }} <span>\Regen: {{ regenStama }}(+5)</span> </p>
             <p>Fatica attuale: {{ faticaAttuale }} <span>\Regen: {{ regenFatica }}(+1)</span> </p>
-            <p v-if="classeMagica()">Energia Magica attuale: {{ magicaAttuale }} <span>\Regen: {{ regenMagica
+            <p v-if="classeMagica()">Energia Magica attuale: {{ magicaAttuale }} <span>\Regen: {{
+                regenMagica
             }}(+1)</span> </p>
 
             <div class="main__button" id="#sfondo">
@@ -92,6 +104,11 @@
                     <button class="fine__turno" @click="fineTurno()">Fine Turno</button>
                     <button class="fine__turno" @click="nessunaAzione()">Nessuna Azione</button>
                     <button @click="cambioSfondo()">prova cambio img</button>
+                    <figure v-if="classeChierico() && settingLuceBuio" class="container__luce_buio">
+                        <img class="luce_buio" src="../assets/tao.jpeg" alt="">
+                        <h4 class="luce" @click="addLuce()">{{ luce }}</h4>
+                        <h4 class="buio" @click="addBuio()">{{ buio }}</h4>
+                    </figure>
                 </div>
 
             </div>
@@ -141,6 +158,9 @@ export default {
             settingConExt: true,
             settingConSta: true,
             settingConFat: true,
+            settingLuceBuio: true,
+            luce: '',
+            buio: ''
 
         };
     },
@@ -164,6 +184,22 @@ export default {
                 if (this.magicaAttuale < 1 && this.combattimento) alert('ENERGIA MAGICA FINITA')
             }
 
+        },
+        luce(newLuce) {
+            localStorage.luce = newLuce;
+        },
+        buio(newBuio) {
+            localStorage.buio = newBuio;
+        }
+
+
+    },
+    mounted() {
+        if (localStorage.luce) {
+            this.luce = localStorage.luce;
+        }
+        if (localStorage.buio) {
+            this.buio = localStorage.buio;
         }
     },
     methods: {
@@ -196,6 +232,9 @@ export default {
         },
         setConFat() {
             this.settingConFat = !this.settingConFat
+        },
+        setBuLu() {
+            this.settingLuceBuio = !this.settingLuceBuio
         },
 
         nuovoCombat() {
@@ -355,6 +394,39 @@ export default {
                 return true
             }
             return false
+        },
+        classeChierico() {
+            let p = this.pg
+            if (p === 'Chierico') {
+                return true
+            }
+            return false
+        },
+        addLuce() {
+            this.luce++
+            if (parseInt(this.buio) + parseInt(this.luce) > 100) {
+                let l = this.luce
+                let b = this.buio
+                if (l > 100) {
+                    this.luce = 100
+                    return
+                }
+                b = parseInt(b) - (parseInt(l) + parseInt(b) - 100)
+                this.buio = b
+            }
+        },
+        addBuio() {
+            this.buio++
+            if (parseInt(this.buio) + parseInt(this.luce) > 100) {
+                let l = this.luce
+                let b = this.buio
+                if (b > 100) {
+                    this.buio = 100
+                    return
+                }
+                l = parseInt(l) - (parseInt(l) + parseInt(b) - 100)
+                this.luce = l
+            }
         }
     },
 
@@ -365,6 +437,41 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.container__luce_buio {
+    max-width: 50%;
+    position: relative;
+
+
+    .luce_buio {
+        max-width: 100%;
+        border-radius: 25px;
+    }
+
+    .luce,
+    .buio {
+        position: absolute;
+        border: 1px dashed currentColor;
+        padding: 1rem;
+        font-size: 2rem;
+        border-radius: 25px;
+        cursor: pointer;
+    }
+
+    .luce {
+        color: white;
+        top: 0;
+        left: 0;
+
+    }
+
+    .buio {
+        color: black;
+        bottom: 0;
+        right: 0;
+
+    }
+}
+
 .main {
 
     // background-image: url(../assets/guerriero_liv_1-10pergamena.jpg);
@@ -446,7 +553,7 @@ export default {
             }
         }
 
-        .special{
+        .special {
             background-color: sandybrown;
         }
 
