@@ -159,8 +159,8 @@ export default {
             settingConSta: true,
             settingConFat: true,
             settingLuceBuio: true,
-            luce: '',
-            buio: ''
+            luce: 0,
+            buio: 0
 
         };
     },
