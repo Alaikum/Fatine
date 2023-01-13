@@ -4,7 +4,7 @@
       <h1 style="padding:1px;">Disegni fatti da quello stronzo di Murdock</h1>
       <p>
         Scegli la tua classe:
-        
+
         <select name="weew" id="" v-model="classe">
           <option value=""></option>
           <option value="Guerriero">Guerriero</option>
@@ -35,6 +35,17 @@ export default {
   methods: {
 
 
+  },
+  watch: {
+    classe(newClasse) {
+      localStorage.classe = newClasse;
+    },
+  },
+  mounted() {
+  
+    if (localStorage.classe) {
+      this.classe = localStorage.classe;
+    }
   },
   computed: {
     cambioClasse: function () {

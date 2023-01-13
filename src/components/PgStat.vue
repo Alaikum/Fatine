@@ -18,6 +18,13 @@
                 <li :class="settingAziDif ? '' : 'setting__off'" @click="setAziDif()">Azione Difensiva</li>
                 <li :class="settingConMag ? '' : 'setting__off'" @click="setConMag()" v-if="classeMagica()">Consuma
                     Magica</li>
+                <li class="special" :class="settingMagicaMenoUno ? '' : 'setting__off'" @click="setMagUno()">Magica -1
+                </li>
+                <li class="special" :class="settingMagicaMenoTre ? '' : 'setting__off'" @click="setMagTre()">Magica -3
+                </li>
+                <li class="special" :class="settingMagicaMenoCinque ? '' : 'setting__off'" @click="setMagCin()">Magica
+                    -5
+                </li>
                 <li :class="settingConExt ? '' : 'setting__off'" @click="setConExt()">Consumi Extra </li>
                 <li class="special" :class="settingConSta ? '' : 'setting__off'" @click="setConSta()">Consuma Stamina
                 </li>
@@ -51,6 +58,7 @@
             </div>
             <div class="button__top">
                 <button @click="vedi()">{{ dati }} </button>
+                <button v-if="classe === 0" @click="pulisci()">Cancella i dati salvati </button>
                 <button v-if="classe === 1" @click="nuovoCombat()">Nuovo Combat </button>
             </div>
 
@@ -79,6 +87,13 @@
                             <input class="consumi__input" type="text" v-model="consumoMagia">
                             <button @click="consumoMagica()"> Consuma Magica</button>
                         </div>
+                        <button v-if="settingMagicaMenoUno" style="margin:5px, 5px, 0 ,5px;"
+                            @click="consumoclick(1)">Magica: - 1
+                        </button>
+                        <button v-if="settingMagicaMenoTre" style="margin:5px;" @click="consumoclick(3)">Magica: - 3
+                        </button>
+                        <button v-if="settingMagicaMenoCinque" style="margin:5px;" @click="consumoclick(5)">Magica: - 5
+                        </button>
                     </div>
                     <div class="arrow" @click="consumiExtra()" v-if="settingConExt">
                         <button class="secondari"> Consumi Extra </button>
@@ -131,9 +146,9 @@ export default {
             magica: 0,
             stamaAttuale: "",
             cambioStama: "",
-            regenStama: 10,
+            regenStama: 0,
             consumoSta: 0,
-            regenFatica: 1,
+            regenFatica: 0,
             regenMagica: 0,
             cambioFatica: "",
             faticaAttuale: "",
@@ -159,6 +174,9 @@ export default {
             settingConSta: true,
             settingConFat: true,
             settingLuceBuio: true,
+            settingMagicaMenoUno: true,
+            settingMagicaMenoTre: true,
+            settingMagicaMenoCinque: true,
             luce: 0,
             buio: 0
 
@@ -171,20 +189,71 @@ export default {
     // }
     // },
     watch: {
-        stamaAttuale() {
-            if (this.stamaAttuale < 1 && this.combattimento) alert('STAMA FINITA')
 
+
+        //stama
+        stama(newStama) {
+            localStorage.stama = newStama;
         },
-        faticaAttuale() {
+        stamaAttuale(newstamaAttuale) {
+            localStorage.stamaAttuale = newstamaAttuale;
+            if (this.stamaAttuale < 1 && this.combattimento) alert('STAMA FINITA')
+        },
+        cambioStama(newcambioStama) {
+            localStorage.cambioStama = newcambioStama;
+        },
+        regenStama(newregenStama) {
+            localStorage.regenStama = newregenStama;
+        },
+        consumoSta(newconsumoSta) {
+            localStorage.consumoSta = newconsumoSta;
+        },
+
+        //fatica
+
+        fatica(newFatica) {
+            localStorage.fatica = newFatica;
+        },
+        faticaAttuale(newfaticaAttuale) {
+            localStorage.faticaAttuale = newfaticaAttuale;
             if (this.faticaAttuale < 1 && this.combattimento) alert('FATICA FINITA')
 
         },
-        magicaAttuale() {
+        cambioFatica(newcambioFatica) {
+            localStorage.cambioFatica = newcambioFatica;
+        },
+        regenFatica(newregenFatica) {
+            localStorage.regenFatica = newregenFatica;
+        },
+        consumoFat(newconsumoFat) {
+            localStorage.consumoFat = newconsumoFat;
+        },
+
+        //magica
+
+
+        magica(newMagica) {
+            localStorage.magica = newMagica;
+        },
+
+
+        magicaAttuale(newmagicaAttuale) {
+            localStorage.magicaAttuale = newmagicaAttuale;
             if (this.classeMagica()) {
                 if (this.magicaAttuale < 1 && this.combattimento) alert('ENERGIA MAGICA FINITA')
             }
 
         },
+        cambioMagica(newcambioMagica) {
+            localStorage.cambioMagica = newcambioMagica;
+        },
+        regenMagica(newregenMagica) {
+            localStorage.regenMagica = newregenMagica;
+        },
+        consumoMagia(newconsumoMagia) {
+            localStorage.consumoMagia = newconsumoMagia;
+        },
+        //luce e buio
         luce(newLuce) {
             localStorage.luce = newLuce;
         },
@@ -195,6 +264,65 @@ export default {
 
     },
     mounted() {
+        //stama
+        if (localStorage.stama) {
+            this.stama = localStorage.stama;
+        }
+        if (localStorage.stamaAttuale) {
+            this.stamaAttuale = localStorage.stamaAttuale;
+        }
+        if (localStorage.cambioStama) {
+            this.cambioStama = localStorage.cambioStama;
+        }
+        if (localStorage.regenStama) {
+            this.regenStama = localStorage.regenStama;
+        }
+        if (localStorage.consumoSta) {
+            this.consumoSta = localStorage.consumoSta;
+        }
+
+        //fatica
+
+        if (localStorage.fatica) {
+            this.fatica = localStorage.fatica;
+        }
+
+        if (localStorage.faticaAttuale) {
+            this.faticaAttuale = localStorage.faticaAttuale;
+        }
+
+        if (localStorage.cambioFatica) {
+            this.cambioFatica = localStorage.cambioFatica;
+        }
+        if (localStorage.regenFatica) {
+            this.regenFatica = localStorage.regenFatica;
+        }
+        if (localStorage.consumoFat) {
+            this.consumoFat = localStorage.consumoFat;
+        }
+
+        //magica
+
+
+        if (localStorage.magica) {
+            this.magica = localStorage.magica;
+        }
+
+        if (localStorage.magicaAttuale) {
+            this.magicaAttuale = localStorage.magicaAttuale;
+        }
+
+        if (localStorage.cambioMagica) {
+            this.cambioMagica = localStorage.cambioMagica;
+        }
+        if (localStorage.regenMagica) {
+            this.regenMagica = localStorage.regenMagica;
+        }
+        if (localStorage.consumoMagia) {
+            this.consumoMagia = localStorage.consumoMagia;
+        }
+
+        //luce e buio
         if (localStorage.luce) {
             this.luce = localStorage.luce;
         }
@@ -232,6 +360,15 @@ export default {
         },
         setConFat() {
             this.settingConFat = !this.settingConFat
+        },
+        setMagUno() {
+            this.settingMagicaMenoUno = !this.settingMagicaMenoUno
+        },
+        setMagTre() {
+            this.settingMagicaMenoTre = !this.settingMagicaMenoTre
+        },
+        setMagCin() {
+            this.settingMagicaMenoCinque = !this.settingMagicaMenoCinque
         },
         setBuLu() {
             this.settingLuceBuio = !this.settingLuceBuio
@@ -273,6 +410,11 @@ export default {
         consumoMagica() {
             this.magicaAttuale = this.cambioMagica;
             this.magicaAttuale = this.magicaAttuale - this.consumoMagia;
+            this.cambioMagica = this.magicaAttuale;
+        },
+        consumoclick(x) {
+            this.magicaAttuale = this.cambioMagica;
+            this.magicaAttuale = this.magicaAttuale - x;
             this.cambioMagica = this.magicaAttuale;
         },
         attaccoLeggero() {
@@ -427,6 +569,11 @@ export default {
                 l = parseInt(l) - (parseInt(l) + parseInt(b) - 100)
                 this.luce = l
             }
+        },
+        pulisci() {
+            localStorage.clear();
+            location.reload();
+
         }
     },
 
@@ -641,6 +788,7 @@ export default {
     .consumi {
         display: flex;
         justify-content: space-between;
+        padding: 5px 0;
     }
 
     .consumi__input {
