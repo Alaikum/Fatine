@@ -10,6 +10,8 @@
                     v-if="classe === 1"><font-awesome-icon icon="fa-solid fa-xmark" /></span>
 
             </h1>
+
+            <!-- SETTAGGI  -->
             <ul class="ul__setting">
                 <li :class="settingAttLeg ? '' : 'setting__off'" @click="setAttLeg()">Attacco Leggero</li>
                 <li :class="settingAbiLeg ? '' : 'setting__off'" @click="setAbiLeg()">Abilità Leggera</li>
@@ -619,6 +621,16 @@ export default {
     }
 }
 
+//scroll bar invisibile chrome safari e opera
+.main::-webkit-scrollbar {
+    display: none;
+}
+ //scroll bar invisibile ie edge e firefox
+.main {
+  -ms-overflow-style: none;  /* IE e Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
 .main {
 
     // background-image: url(../assets/guerriero_liv_1-10pergamena.jpg);
@@ -629,9 +641,12 @@ export default {
     // border: 1px solid black;
     border-radius: 25px;
     overflow: hidden;
+    overflow-y: auto;
     text-align: start;
     padding: 10px 5px;
     position: relative;
+
+
 
 
     h4,
@@ -657,7 +672,7 @@ export default {
     .menu__setting {
         position: absolute;
         top: 0;
-        bottom: 0;
+        // bottom: 0;
         right: 0;
         left: 0;
         background-color: rgba(0, 0, 0, 0.5);
